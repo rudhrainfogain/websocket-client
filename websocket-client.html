@@ -1,0 +1,60 @@
+<html>
+    <head>
+        <title>Scale WebSocket Client</title>
+		<style>
+		ul{
+			list-style-type:none;
+		}
+		</style>
+        <script src="./stomp.js"></script>
+		<script src="./sockjs.js"></script>
+		<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.js"></script>-->
+        
+		<script type="text/javascript">
+			var socket;
+			var stompClient;
+			var socket;
+			
+			function connect(){
+				socket = new SockJS("http://localhost:8080/poc" , {});
+				stompClient = Stomp.over(socket);
+				stompClient.connect({}, function(frame){
+					stompClient.subscribe("/queue/output", callback, {});
+					console.log("Connected");
+				});
+				
+            }
+			
+            function disconnect() {
+                if(stompClient != null) {
+					
+                    stompClient.disconnect(null,{});
+                }
+                console.log("Disconnected");
+            }
+			callback = function(message){
+				console.log(message.body);				
+				var node = document.createElement("li");                 
+				var textnode = document.createTextNode(message.body);    
+				node.appendChild(textnode);                              
+				document.getElementById("barcodes").appendChild(node);     
+
+			}
+        </script>
+    </head>
+    <body>
+        <div>
+            <br />
+            <div>
+				<button onclick="connect()">Connect</button>
+                <button onclick="disconnect();">
+                    Disconnect
+                </button>
+            </div>
+            <br />
+            <ul id="barcodes">
+			</ul>
+        </div>
+ 
+    </body>
+</html>
